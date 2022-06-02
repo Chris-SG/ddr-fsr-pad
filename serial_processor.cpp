@@ -46,6 +46,9 @@ bool SerialProcessor::Process(Panel panels[]) {
                     return true;
                 }
                 break;
+            case 'c':
+                clear_action();
+                break;
         }
     }
     return false;

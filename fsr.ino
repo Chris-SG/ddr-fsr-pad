@@ -32,6 +32,12 @@ struct eeprom_data {
     bool valid;
 };
 
+void clear_eeprom() {
+    for (auto&& addr : EEPROM) {
+        EEPROM.write(addr, 0);
+    }
+}
+
 int16_t getSensorPressure(uint16_t index) {
     return analogRead(index + A0);
 }
@@ -133,7 +139,11 @@ void populatePanelSensorData(eeprom_data data) {
 
 void setup() {
     serialProcessor = new SerialProcessor(115200);
-    while(DEBUG && !Serial) ;
+    serialProcessor->SetClearAction(clear_eeprom);
+
+#if DEBUG
+    while (!Serial);
+#endif
     for (auto i = 0; i < PANEL_COUNT; i++) {
         panels[i] = Panel(i, SENSOR_PER_PANEL);
     }
