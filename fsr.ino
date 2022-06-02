@@ -1,3 +1,5 @@
+#define DEBUG true
+
 #include "panel.h"
 #include "serial_processor.h"
 #include <EEPROM.h>
@@ -6,8 +8,6 @@
 #define SENSOR_PER_PANEL 1
 #define PANEL_COUNT 4
 #define UPDATE_RATE 1000
-
-extern const bool DEBUG = false;
 
 Panel panels[PANEL_COUNT];
 SerialProcessor* serialProcessor;
@@ -45,9 +45,9 @@ eeprom_data read_eeprom() {
 
     eeprom_data data;
     if (eepromCheck1 == UINT16_MAX) {
-        if (DEBUG) {
-            Serial.write("EEPROM data invalid, skipping\n");
-        }
+#if DEBUG
+        Serial.write("EEPROM data invalid, skipping\n");
+#endif
         data.valid = false;
         return data;
     }
@@ -67,17 +67,17 @@ eeprom_data read_eeprom() {
     EEPROM.get(eeprom_addr, eepromCheck2);
     data.valid = eepromCheck1 != UINT16_MAX && eepromCheck1 == eepromCheck2;
 
-    if(DEBUG) {
-        char debugBuf[512];
-        Serial.write("READ EEPROM DATA FROM ARDUINO\n");
-        sprintf(debugBuf, "PANEL COUNT: %hhu\nSENSORS PER PANEL: %hhu\nCHECK1: %u\nCHECK2: %u\nVALID DATA: %hhu\n", data.panel_count, data.sensors_per_panel, eepromCheck1, eepromCheck2, data.valid);
+#if DEBUG
+    char debugBuf[512];
+    Serial.write("READ EEPROM DATA FROM ARDUINO\n");
+    sprintf(debugBuf, "PANEL COUNT: %hhu\nSENSORS PER PANEL: %hhu\nCHECK1: %u\nCHECK2: %u\nVALID DATA: %hhu\n", data.panel_count, data.sensors_per_panel, eepromCheck1, eepromCheck2, data.valid);
+    Serial.write(debugBuf);
+    for (auto i = 0; i < sizeof(data.sensor_data) / sizeof(eeprom_sensor_data); i++) {
+        sprintf(debugBuf, "SENSOR %d:\n%hu %hu %hu\n", i, data.sensor_data[i].press_threshold, data.sensor_data[i].depress_threshold, data.sensor_data[i].step);
         Serial.write(debugBuf);
-        for (auto i = 0; i < sizeof(data.sensor_data) / sizeof(eeprom_sensor_data); i++) {
-            sprintf(debugBuf, "SENSOR %d:\n%hu %hu %hu\n", i, data.sensor_data[i].press_threshold, data.sensor_data[i].depress_threshold, data.sensor_data[i].step);
-            Serial.write(debugBuf);
-        }
-        Serial.write('\n');
     }
+    Serial.write('\n');
+#endif
 
     return data;
 }
@@ -99,28 +99,28 @@ void write_eeprom(eeprom_data data) {
         eeprom_addr += sizeof(data.sensor_data[i]);
     }
     EEPROM.put(eeprom_addr, time);
-    if (DEBUG) {
-        char debugBuf[512];
-        Serial.write("WROTE EEPROM DATA TO ARDUINO\n");
-        sprintf(debugBuf, "PANEL COUNT: %hhu\nSENSORS PER PANEL: %hhu\nVALID CHECK: %u\n", data.panel_count, data.sensors_per_panel, time);
+#if DEBUG
+    char debugBuf[512];
+    Serial.write("WROTE EEPROM DATA TO ARDUINO\n");
+    sprintf(debugBuf, "PANEL COUNT: %hhu\nSENSORS PER PANEL: %hhu\nVALID CHECK: %u\n", data.panel_count, data.sensors_per_panel, time);
+    Serial.write(debugBuf);
+    for (auto i = 0; i < sizeof(data.sensor_data) / sizeof(eeprom_sensor_data); i++) {
+        sprintf(debugBuf, "SENSOR %d:\n%hu %hu %hu\n", i, data.sensor_data[i].press_threshold, data.sensor_data[i].depress_threshold, data.sensor_data[i].step);
         Serial.write(debugBuf);
-        for (auto i = 0; i < sizeof(data.sensor_data) / sizeof(eeprom_sensor_data); i++) {
-            sprintf(debugBuf, "SENSOR %d:\n%hu %hu %hu\n", i, data.sensor_data[i].press_threshold, data.sensor_data[i].depress_threshold, data.sensor_data[i].step);
-            Serial.write(debugBuf);
-        }
-        Serial.write('\n');
     }
+    Serial.write('\n');
+#endif
 }
 
 void populatePanelSensorData(eeprom_data data) {
     for(auto i = 0; i < data.panel_count; i++) {
         for (auto j = 0; j < data.sensors_per_panel; j++) {
             auto sensorData = data.sensor_data[i*data.sensors_per_panel+j];
-            if (DEBUG) {
-                char buf[512];
-                sprintf(buf, "Setting panel %d sensor %d: %hu %hu %hu\n", i, j, sensorData.press_threshold, sensorData.depress_threshold,sensorData.step);
-                Serial.print(buf);
-            }
+#if DEBUG
+            char buf[512];
+            sprintf(buf, "Setting panel %d sensor %d: %hu %hu %hu\n", i, j, sensorData.press_threshold, sensorData.depress_threshold,sensorData.step);
+            Serial.print(buf);
+#endif
             panels[i].SetSensor(
                     j,
                     sensorData.press_threshold,

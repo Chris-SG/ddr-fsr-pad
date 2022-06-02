@@ -1,7 +1,5 @@
 #include "sensor.h"
 
-extern const bool DEBUG;
-
 Sensor::Sensor(uint16_t press_threshold, uint16_t depress_threshold, int16_t max_step)
     :
         _press_threshold{press_threshold}, _depress_threshold{depress_threshold}, _max_step{max_step}, _prev_value{0}, _state{false} {
@@ -14,16 +12,16 @@ bool Sensor::Evaluate(int16_t new_val) {
     _prev_value += val_to_set;
     if (_state) {
         if (_prev_value <= _depress_threshold) {
-            if (DEBUG) {
-                Serial.print("Sensor is no longer pressed\n");
-            }
+#if DEBUG
+            Serial.print("Sensor is no longer pressed\n");
+#endif
             _state = false;
         }
     } else {
         if (_prev_value >= _press_threshold) {
-            if (DEBUG) {
-                Serial.print("Sensor is now pressed\n");
-            }
+#if DEBUG
+            Serial.print("Sensor is now pressed\n");
+#endif
             _state = true;
         }
     }

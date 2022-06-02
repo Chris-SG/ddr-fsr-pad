@@ -1,7 +1,5 @@
 #include "panel.h"
 
-extern const bool DEBUG;
-
 Panel::Panel(uint8_t index, uint8_t sensorCount) : _panelIndex{index}, _sensorCount{sensorCount}, _state{false} {
     for (auto i = 0; i < sensorCount; i++) {
         _sensors[i] = Sensor(0, 0, 0);

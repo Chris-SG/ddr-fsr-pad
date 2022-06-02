@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include "serial_processor.h"
 
-extern const bool DEBUG;
-
 void PrintPanelData(Panel& panel) {
     char buffer[1024] = { 0 };
     panel.SensorData(buffer);
@@ -11,12 +9,12 @@ void PrintPanelData(Panel& panel) {
 
 void WritePanelData(Panel& panel, uint8_t sensor, uint16_t press, uint16_t depress, uint16_t step) {
     panel.SetSensor(sensor, press, depress, step);
-    if (DEBUG) {
-        char buffer [1024] = { 0 };
+#if DEBUG
+    char buffer [1024] = { 0 };
         sprintf(buffer, "Wrote to panel %d sensor %d: %d, %d, %d\n", panel.PanelIndex(), sensor, press, depress, step);
         Serial.print(buffer);
         Serial.print('\n');
-    }
+#endif
 }
 
 SerialProcessor::SerialProcessor(long baud_rate) {
