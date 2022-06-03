@@ -1,6 +1,8 @@
 #ifndef FSR_SENSOR_H
 #define FSR_SENSOR_H
 
+#define DEBUG true
+
 #include <Arduino.h>
 
 class Sensor {

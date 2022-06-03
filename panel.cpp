@@ -1,9 +1,13 @@
 #include "panel.h"
 
 Panel::Panel(uint8_t index, uint8_t sensorCount) : _panelIndex{index}, _sensorCount{sensorCount}, _state{false} {
-    for (auto i = 0; i < sensorCount; i++) {
+    auto count = min(sensorCount, SENSOR_LIMIT);
+    for (auto i = 0; i < count; i++) {
         _sensors[i] = Sensor(0, 0, 0);
     }
+}
+
+Panel::~Panel() {
 }
 
 bool Panel::Evaluate(int16_t (*data_fetcher)(uint16_t)) {

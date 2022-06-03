@@ -5,7 +5,11 @@ Sensor::Sensor(uint16_t press_threshold, uint16_t depress_threshold, int16_t max
         _press_threshold{press_threshold}, _depress_threshold{depress_threshold}, _max_step{max_step}, _prev_value{0}, _state{false} {
 }
 
-Sensor::~Sensor() {}
+Sensor::~Sensor() {
+#if DEBUG
+    Serial.print("DELETING SENSOR\n");
+#endif
+}
 
 bool Sensor::Evaluate(int16_t new_val) {
     int16_t val_to_set = min(max(new_val - _prev_value, - _max_step), _max_step);
