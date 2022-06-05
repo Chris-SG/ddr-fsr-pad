@@ -34,13 +34,8 @@ void Panel::SetSensor(uint8_t sensorIndex, uint16_t pressThreshold, uint16_t dep
     _sensors[sensorIndex].SetStep(step);
 }
 
-void Panel::SensorData(char* buffer) {
-    sprintf(buffer, "PANEL %d\n", _panelIndex);
-    for (int i = 0; i < _sensorCount; i++) {
-        char tmp[64] = { 0 };
-        sprintf(tmp, "SENSOR %d: %d %d %d\n", i, _sensors[i].GetPressThreshold(), _sensors[i].GetDepressThreshold(), _sensors[i].GetStep());
-        strcat(buffer, tmp);
-    }
+sensor_settings Panel::SensorData(uint8_t sensor) {
+    return _sensors[sensor].GetAll();
 }
 
 void Panel::GetSensor(uint8_t sensorIndex, uint16_t &pressThreshold, uint16_t &depressThreshold, uint16_t &step) {

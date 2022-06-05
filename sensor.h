@@ -1,9 +1,15 @@
 #ifndef FSR_SENSOR_H
 #define FSR_SENSOR_H
 
-#define DEBUG true
-
 #include <Arduino.h>
+
+struct sensor_settings {
+    uint16_t press;
+    uint16_t depress;
+    int16_t step;
+    int16_t prev;
+    bool state;
+};
 
 class Sensor {
 public:
@@ -18,6 +24,7 @@ public:
     uint16_t GetDepressThreshold();
     void SetStep(uint16_t stepSize);
     uint16_t GetStep();
+    sensor_settings GetAll();
 
 private:
     uint16_t _press_threshold;

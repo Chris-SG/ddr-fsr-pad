@@ -55,3 +55,13 @@ void Sensor::SetStep(uint16_t stepSize) {
 uint16_t Sensor::GetStep() {
     return _max_step;
 }
+
+sensor_settings Sensor::GetAll() {
+    return {
+        _press_threshold,
+        _depress_threshold,
+        _max_step,
+        _prev_value,
+        _state
+    };
+}

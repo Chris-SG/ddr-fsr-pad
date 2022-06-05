@@ -12,7 +12,7 @@ enum SerialAction {
 class SerialProcessor {
 public:
     SerialProcessor(long baud_rate);
-    bool Process(Panel panels[]);
+    void Process();
 
     void SetClearAction(void (*clear_action)()) {
         this->clear_action = clear_action;
@@ -22,10 +22,19 @@ public:
         this->set_panel_sensor_count = set_panel_sensor_count;
     }
 
+    void SetPrintPanelDataAction(void (*print_panel_data)(uint8_t index)) {
+        this->print_panel_data = print_panel_data;
+    }
+
+    void SetWritePanelDataAction(void (*write_panel_data)(uint8_t panel, uint8_t sensor, uint16_t press, uint16_t depress, uint16_t step)) {
+        this->write_panel_data = write_panel_data;
+    }
+
 private:
-    char _buffer[128];
     void (*clear_action)();
     void (*set_panel_sensor_count)(uint8_t panels, uint8_t sensors);
+    void (*print_panel_data)(uint8_t index);
+    void (*write_panel_data)(uint8_t panel, uint8_t sensor, uint16_t press, uint16_t depress, uint16_t step);
 };
 
 #endif //FSR_SERIAL_PROCESSOR_H
