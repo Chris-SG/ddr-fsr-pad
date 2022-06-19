@@ -1,5 +1,3 @@
-#define DEBUG true
-
 #include "settings.h"
 #include "panel.h"
 #include "serial_processor.h"
@@ -60,7 +58,14 @@ struct eeprom_data {
 };
 
 int16_t getSensorPressure(uint16_t index) {
+#if DEBUG
+    auto val = analogRead(pins[index]);
+    sprintf(debug_buffer, "READ INDEX %hu VAL %hu\n", index, val);
+    Serial.write(debug_buffer);
+    return val;
+#else
     return analogRead(pins[index]);
+#endif
 }
 
 eeprom_data read_eeprom() {
@@ -191,6 +196,11 @@ void clear_eeprom() {
     }
 }
 
+void print_settings() {
+    sprintf(buffer, "PANEL_COUNT %hhu SENSOR_COUNT %hhu PANEL_LIMIT %d SENSOR_LIMIT %d BUTTON_LIMIT %d\n\u0004\u0003", panelCount, sensorCount, PANEL_LIMIT, SENSOR_LIMIT, BTN_MAX);
+    Serial.write(buffer);
+}
+
 void set_panel_sensor_counts(uint8_t newPanelCount, uint8_t newSensorCount) {
 #if DEBUG
     sprintf(debug_buffer, "CHANGING PANEL COUNT FROM %huu to %huu AND SENSOR COUNT FROM %huu to %huu\n", panelCount, newPanelCount, sensorCount, newSensorCount);
@@ -210,6 +220,7 @@ void print_panel_data(uint8_t index) {
         sprintf(buffer, "SENSOR %d: %d %d %d %d %hhu\n", i, data.press, data.depress, data.step, data.prev, data.state);
         Serial.write(buffer);
     }
+    Serial.write("\u0004\u0003");
 }
 
 void write_panel_sensor_data(uint8_t panel, uint8_t sensor, uint16_t press, uint16_t depress, uint16_t step) {
@@ -238,6 +249,7 @@ void write_panel_sensor_data(uint8_t panel, uint8_t sensor, uint16_t press, uint
 void setup() {
     serialProcessor = new SerialProcessor(115200);
     serialProcessor->SetClearAction(clear_eeprom);
+    serialProcessor->SetPrintSettingsAction(print_settings);
     serialProcessor->SetPanelSensorCountAction(set_panel_sensor_counts);
     serialProcessor->SetPrintPanelDataAction(print_panel_data);
     serialProcessor->SetWritePanelDataAction(write_panel_sensor_data);

@@ -8,7 +8,7 @@
 #define BUF_SIZE 256
 char buffer[BUF_SIZE];
 
-#define DEBUG true
+#define DEBUG false
 #if DEBUG
 char debug_buffer[BUF_SIZE];
 #endif

@@ -12,20 +12,15 @@ Sensor::~Sensor() {
 }
 
 bool Sensor::Evaluate(int16_t new_val) {
+
     int16_t val_to_set = min(max(new_val - _prev_value, - _max_step), _max_step);
     _prev_value += val_to_set;
     if (_state) {
         if (_prev_value <= _depress_threshold) {
-#if DEBUG
-            Serial.print("Sensor is no longer pressed\n");
-#endif
             _state = false;
         }
     } else {
         if (_prev_value >= _press_threshold) {
-#if DEBUG
-            Serial.print("Sensor is now pressed\n");
-#endif
             _state = true;
         }
     }

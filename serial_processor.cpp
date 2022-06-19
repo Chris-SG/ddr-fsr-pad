@@ -22,10 +22,11 @@ void SerialProcessor::Process() {
         if (bytes_read == 0) {
             return;
         }
-        Serial.write(buf);
-        Serial.write('\n');
 
         switch(buf[0]) {
+            case 's':
+                print_settings();
+                break;
             case 'p':
                 uint8_t panelIndex;
                 if (sscanf(buf, "p %hhu", &panelIndex)) {
@@ -49,6 +50,5 @@ void SerialProcessor::Process() {
                 }
                 break;
         }
-        Serial.print("Done\n");
     }
 }

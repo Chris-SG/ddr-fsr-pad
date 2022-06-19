@@ -18,6 +18,10 @@ public:
         this->clear_action = clear_action;
     }
 
+    void SetPrintSettingsAction(void (*print_settings)()) {
+        this->print_settings = print_settings;
+    }
+
     void SetPanelSensorCountAction(void (*set_panel_sensor_count)(uint8_t panels, uint8_t sensors)) {
         this->set_panel_sensor_count = set_panel_sensor_count;
     }
@@ -32,6 +36,7 @@ public:
 
 private:
     void (*clear_action)();
+    void (*print_settings)();
     void (*set_panel_sensor_count)(uint8_t panels, uint8_t sensors);
     void (*print_panel_data)(uint8_t index);
     void (*write_panel_data)(uint8_t panel, uint8_t sensor, uint16_t press, uint16_t depress, uint16_t step);
